@@ -1,0 +1,9 @@
+{% extends'base.html.twig' %}
+{% block body %}
+<div class="container my-5" >
+    <h2>Page d'inscription</h2>
+    {{ form(RegisterForm) }}
+    <br>
+    Vous avez déja un compte ? <a href="{{ path('app_login') }}"> Connectez vous</a>
+</div>
+{% endblock %}
