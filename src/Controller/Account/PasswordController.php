@@ -1,7 +1,6 @@
 <?php
 
-namespace App\Controller;
-
+namespace App\Controller\Account;
 
 use App\Form\PasswordUserType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,35 +10,36 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
-class AccountController extends AbstractController
+class PasswordController extends AbstractController
 {
-    #[Route('/compte', name: 'app_account')]
-    public function index(): Response
-    {
-        return $this->render('account/index.html.twig');
-    }
+    private $entityManager;
 
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
     #[Route('/compte/modifier-mot-de-passe', name: 'app_account_modify_pwd')]
-    public function password(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
+    public function index(Request $request, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = $this->getUser();
 
-        $form = $this->createForm(PasswordUserType::class,$user,[
-            'passwordHasher'=> $passwordHasher
+        $form = $this->createForm(PasswordUserType::class, $user, [
+            'passwordHasher' => $passwordHasher
         ]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             //alert message
             $this->addFlash(
                 'success',
                 'Votre mot de passe est correctemet mis à jour !'
             );
-            $entityManager->flush();
+            $this->entityManager->flush();
         }
-        return $this->render('account/password.html.twig',[
-            'modifyPwd'=>$form->createView()
+        return $this->render('account/password/index.html.twig', [
+            'modifyPwd' => $form->createView()
         ]);
 
     }
 }
+?>
